@@ -23,7 +23,7 @@ def structCSV(input_file_name):
         for newline in reader: # for (newline <- each row) in CSV file
             # extract relavent data: newdate <-date in year, newproduct <- product name, newcompany <- company name
             newdate = newline[0][:4]
-            newproduct = newline[1]
+            newproduct = newline[1].lower()
             newcompany = newline[7]
             
             # exceptions
