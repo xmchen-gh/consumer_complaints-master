@@ -62,10 +62,10 @@ def sortCSV(product, output_file_name):
                 stat =  list(product[product_key][date_key].values())                                       # convert {companies:occurence} to list
                 TotNumCpt = sum(stat)                                                                       # calculate total number of complaints
                 TotNumCpn = len(stat)                                                                       # calculate total number of companies
-                MaxPercent = 100*max(stat)//TotNumCpt                                                       # calculate highest percentage
+                MaxPercent = round(100*max(stat)/TotNumCpt)                                                       # calculate highest percentage
                 if product_key.find(',') != -1:                                                             # write result to file for products with no ',' in their name
-                    #print('"'+product_key+'"', date_key, TotNumCpt, TotNumCpn, MaxPercent)
-                    writer.writerow(['"'+product_key+'"', date_key, TotNumCpt, TotNumCpn, MaxPercent])      
+                    #print('\"'+product_key+'\"', date_key, TotNumCpt, TotNumCpn, MaxPercent)
+                    writer.writerow(['\"'+product_key+'\"', date_key, TotNumCpt, TotNumCpn, MaxPercent])      
                 else:                                                                                       # write result to file for products with ',' in their name
                     # print(product_key, date_key, TotNumCpt, TotNumCpn, MaxPercent)
                     writer.writerow([product_key, date_key, TotNumCpt, TotNumCpn, MaxPercent])
