@@ -1,10 +1,14 @@
+"""
+Created on Sun Mar 29 2020
+
+@author: xiaoqianchen
+Insight data coding challenge
+"""
+
 
 import sys
 import csv
 
-#exceptions
-# file input
-# error element
 
 #This function takes oniginal CSV input file and build a structure 'product' using dictionary
 #in the format {product:{year:{company:occurernce}}}
@@ -13,25 +17,33 @@ def structCSV(input_file_name):
     
     product = {}     # initiate dictionary   {product:{year:{company:occurernce}}}
     
-    with open(input_file_name, newline='') as f: #open file as f
+    lineNum = 0 # tracks row # in csv file
+    with open(input_file_name, newline='', encoding= 'unicode_escape') as f: #open file as f
         reader = csv.reader(f)
-        try:
-            newline = next(reader) #exclude header
-        except UnicodeDecodeError: 
-            print('wrong?')
+        newline = next(reader) #exclude header
+        lineNum += 1
 
+        
         for newline in reader: # for (newline <- each row) in CSV file
+            lineNum += 1
             # extract relavent data: newdate <-date in year, newproduct <- product name, newcompany <- company name
-            newdate = newline[0][:4]
-            newproduct = newline[1].lower()
-            newcompany = newline[7]
+            
+            try:
+                newdate = newline[0][:4]
+                newproduct = newline[1].lower()
+                newcompany = newline[7]
+            except Exception as e:
+                print(f'row = {str(lineNum)} Error: ', e)
+                continue
             
             # exceptions
             try: # in case date is not numbers
                 int(newdate)
-            except ValueError:
+            except ValueError as e:
+                print(f'row = {str(lineNum)} Error: ', e)
                 continue
-            if newproduct == '': # in case no product name
+            if newproduct == '' or int(newdate)<2010 or int(newdate)>2020: # in case no product name and nonexistant year (CFPB formed in 2010)
+                print(f'row = {str(lineNum)} Error: no product name or non-existant year')                
                 continue
 
             # place extracted info in dictionary
@@ -57,19 +69,15 @@ def sortCSV(product, output_file_name):
     with open(output_file_name, 'w', newline='') as file: # open file
         writer = csv.writer(file)
 
-        for product_key in sorted(product.keys()):                                                  # for each sorted product
-            for date_key in sorted(product[product_key].keys()):                                        # for each year in one product
-                stat =  list(product[product_key][date_key].values())                                       # convert {companies:occurence} to list
-                TotNumCpt = sum(stat)                                                                       # calculate total number of complaints
-                TotNumCpn = len(stat)                                                                       # calculate total number of companies
-                MaxPercent = round(100*max(stat)/TotNumCpt)                                                       # calculate highest percentage
-                if product_key.find(',') != -1:                                                             # write result to file for products with no ',' in their name
-                    #print('\"'+product_key+'\"', date_key, TotNumCpt, TotNumCpn, MaxPercent)
-                    #writer.writerow(['\"'+product_key+'\"', date_key, TotNumCpt, TotNumCpn, MaxPercent])   
-                    writer.writerow([product_key, date_key, TotNumCpt, TotNumCpn, MaxPercent])
-                else:                                                                                       # write result to file for products with ',' in their name
-                    # print(product_key, date_key, TotNumCpt, TotNumCpn, MaxPercent)
-                    writer.writerow([product_key, date_key, TotNumCpt, TotNumCpn, MaxPercent])
+        for product_key in sorted(product.keys()):                                  # for each sorted product
+            for date_key in sorted(product[product_key].keys()):                        # for each year in one product
+                stat =  list(product[product_key][date_key].values())                       # convert {companies:occurence} to list
+                TotNumCpt = sum(stat)                                                       # calculate total number of complaints
+                TotNumCpn = len(stat)                                                       # calculate total number of companies
+                MaxPercent = round(100*max(stat)/TotNumCpt)                                 # calculate highest percentage
+                writer.writerow([product_key, date_key, TotNumCpt, TotNumCpn, MaxPercent])  # write result in file
+
+
 
                 
 #External input
