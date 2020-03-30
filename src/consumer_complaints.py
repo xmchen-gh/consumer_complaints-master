@@ -33,17 +33,17 @@ def structCSV(input_file_name):
                 newproduct = newline[1].lower()
                 newcompany = newline[7]
             except Exception as e:
-                print(f'row = {str(lineNum)} Error: ', e)
+                print('row = '+ str(lineNum) + ' Error: ', e)
                 continue
             
             # exceptions
             try: # in case date is not numbers
                 int(newdate)
             except ValueError as e:
-                print(f'row = {str(lineNum)} Error: ', e)
+                print('row = ' + str(lineNum) + ' Error: ', e)
                 continue
             if newproduct == '' or int(newdate)<2010 or int(newdate)>2020: # in case no product name and nonexistant year (CFPB formed in 2010)
-                print(f'row = {str(lineNum)} Error: no product name or non-existant year')                
+                print('row = ' + str(lineNum) + ' Error: no product name or non-existant year')                
                 continue
 
             # place extracted info in dictionary
